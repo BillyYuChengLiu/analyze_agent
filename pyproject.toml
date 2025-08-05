@@ -1,0 +1,91 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "problem-resolve-service"
+version = "1.0.0"
+description = "智能問題分析與解決服務"
+authors = [
+    {name = "Problem Resolve Team", email = "team@problem-resolve.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Monitoring",
+    "Topic :: System :: Logging",
+]
+dependencies = [
+    "google-cloud-logging>=3.9.0",
+    "google-cloud-pubsub>=2.19.0",
+    "google-cloud-storage>=2.11.0",
+    "google-auth>=2.28.0",
+    "google-auth-oauthlib>=1.2.0",
+    "google-auth-httplib2>=0.2.0",
+    "graylog-api>=0.1.0",
+    "requests>=2.32.0",
+    "pydantic>=2.6.0",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "python-dotenv>=1.0.1",
+    "aiohttp>=3.9.3",
+    "asyncio-mqtt>=0.16.1",
+    "paho-mqtt>=1.6.1",
+    "redis>=5.0.2",
+    "celery>=5.3.6",
+    "prometheus-client>=0.20.0",
+    "structlog>=24.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/problem-resolve/service"
+Repository = "https://github.com/problem-resolve/service"
+Documentation = "https://problem-resolve.readthedocs.io"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ['py313']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+asyncio_mode = "auto" 

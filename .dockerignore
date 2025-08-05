@@ -1,0 +1,13 @@
+# 排除所有檔案
+*
+
+# 只包含需要的檔案
+!requirements.txt
+!src/
+!Dockerfile.analyze-problem
+!docker-compose.analyze-problem.yml
+
+# 排除 src 中的不需要檔案
+src/__pycache__/
+src/*.pyc
+src/.pytest_cache/ 

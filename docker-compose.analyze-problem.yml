@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  analyze-problem:
+    build:
+      context: .
+      dockerfile: Dockerfile.analyze-problem
+    ports:
+      - "8001:8001"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/src/credentials/cloud-sre-poc-465509-a57d7aab386b.json
+      - GOOGLE_CLOUD_PROJECT=cloud-sre-poc-465509
+      - GOOGLE_CLOUD_LOCATION=us-central1
+      - GOOGLE_GENAI_USE_VERTEXAI=true
+    volumes:
+      - ./src/credentials:/app/src/credentials
+    restart: unless-stopped 
