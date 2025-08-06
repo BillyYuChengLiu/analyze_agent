@@ -14,13 +14,15 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 複製 src 目錄（包含您的 agent）
+# 複製 src 目錄
 COPY src/ ./src/
 
 EXPOSE 8001
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8001/health || exit 1
 
-# 啟動命令 - 直接執行 src/agent.py
-CMD ["python", "src/agent.py"] 
+# 修改健康檢查，使用根路徑而不是 /health
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8001/ || exit 1
+
+# 使用 uvicorn 啟動
+CMD ["uvicorn", "src.agent:a2a_app", "--host", "0.0.0.0", "--port", "8001"]

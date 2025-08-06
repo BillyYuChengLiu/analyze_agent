@@ -1,1 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
 .venv/
+venv/
+ENV/
+env/
+
+# Credentials and Secrets
+src/credentials/
+*.json
+*.key
+*.pem
+.env
+env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Personal notes
+指令集.txt

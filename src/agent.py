@@ -12,23 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import random
-
+import os
 from google.adk import Agent
 from google.adk.a2a.utils.agent_to_a2a import to_a2a
-from google.adk.tools.tool_context import ToolContext
 from google.genai import types
 
-from dotenv import load_dotenv
-import os
+# 設定環境變數（GCP 部署時會自動處理認證）
+def setup_environment():
+    """設定環境變數"""
+    # 如果沒有設定專案 ID，使用預設值
+    if not os.getenv("GOOGLE_CLOUD_PROJECT"):
+        os.environ["GOOGLE_CLOUD_PROJECT"] = "cloud-sre-poc-465509"
+    
+    # 如果沒有設定位置，使用預設值
+    if not os.getenv("GOOGLE_CLOUD_LOCATION"):
+        os.environ["GOOGLE_CLOUD_LOCATION"] = "us-central1"
+    
+    # 設定 Vertex AI 使用
+    if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI"):
+        os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
+    
+    print(f"Project: {os.getenv('GOOGLE_CLOUD_PROJECT')}")
+    print(f"Location: {os.getenv('GOOGLE_CLOUD_LOCATION')}")
+    print(f"Use Vertex AI: {os.getenv('GOOGLE_GENAI_USE_VERTEXAI')}")
 
-load_dotenv()  # 會自動從當前目錄或上層尋找 .env 並載入
-print("USE_VERTEXAI =", os.getenv("GOOGLE_GENAI_USE_VERTEXAI"))
-print("PROJECT =", os.getenv("GOOGLE_CLOUD_PROJECT"))
-print("LOCATION =", os.getenv("GOOGLE_CLOUD_LOCATION"))
-print("CREDENTIALS =", os.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
-
-
+# 初始化環境
+setup_environment()
 
 root_agent = Agent(
     model='gemini-2.0-flash',
@@ -45,17 +54,10 @@ root_agent = Agent(
       4. 如果需要更多資訊，反饋使用者請他做下一次的查詢計畫。
       5. 如果資訊充足，請給出定論。
     """,
-    tools=[
- 
-    ],
-    # planner=BuiltInPlanner(
-    #     thinking_config=types.ThinkingConfig(
-    #         include_thoughts=True,
-    #     ),
-    # ),
+    tools=[],
     generate_content_config=types.GenerateContentConfig(
         safety_settings=[
-            types.SafetySetting(  # avoid false alarm about rolling dice.
+            types.SafetySetting(
                 category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
                 threshold=types.HarmBlockThreshold.OFF,
             ),
@@ -63,8 +65,10 @@ root_agent = Agent(
     ),
 )
 
-a2a_app = to_a2a(root_agent, port=8001)
+# 創建 A2A 應用程式
+a2a_app = to_a2a(root_agent)
 
 if __name__ == "__main__":
     print("Starting analyze_and_recommend agent on port 8001...")
-    a2a_app.run(host="0.0.0.0", port=8001)
+    import uvicorn
+    uvicorn.run(a2a_app, host="0.0.0.0", port=8001)

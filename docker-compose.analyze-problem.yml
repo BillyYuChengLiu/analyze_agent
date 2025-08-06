@@ -8,10 +8,8 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/src/credentials/cloud-sre-poc-465509-a57d7aab386b.json
+      # 移除憑證檔案路徑，使用 GCP 內建認證
       - GOOGLE_CLOUD_PROJECT=cloud-sre-poc-465509
       - GOOGLE_CLOUD_LOCATION=us-central1
       - GOOGLE_GENAI_USE_VERTEXAI=true
-    volumes:
-      - ./src/credentials:/app/src/credentials
-    restart: unless-stopped 
+    restart: unless-stopped
