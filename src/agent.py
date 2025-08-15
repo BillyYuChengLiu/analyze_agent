@@ -31,7 +31,9 @@ def setup_environment():
     # 設定 Vertex AI 使用
     if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI"):
         os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
-    
+
+  
+
     print(f"Project: {os.getenv('GOOGLE_CLOUD_PROJECT')}")
     print(f"Location: {os.getenv('GOOGLE_CLOUD_LOCATION')}")
     print(f"Use Vertex AI: {os.getenv('GOOGLE_GENAI_USE_VERTEXAI')}")
@@ -48,11 +50,33 @@ root_agent = Agent(
         'graylog的日誌主要要根據MSGID來追蹤問題發生順序。'
     ),
     instruction="""
+    處理邏輯:
       1. 接收計畫書與graylog的日誌。
       2. 分析計畫書與日誌，找出問題發生可能原因。
       3. 給出解決建議。
       4. 如果需要更多資訊，反饋使用者請他做下一次的查詢計畫。
-      5. 如果資訊充足，請給出定論。
+      5. 依照下列格式用json回傳內容。
+      
+-------------------------------
+產出如下 將結果填入對應欄位
+【問題回報格式】
+1. 類型：批次/API
+2. SOURCECHANNEL：
+3. MSGID：
+4. 時間：
+5. 問題描述：
+6. 根因：
+7. 建議：
+-------------------------------
+【範例】
+1. 類型：批次
+2. SOURCECHANNEL：MID-LX-MSP-99
+3. MSGID：MSP-C-FAVORFEEQ999
+4. 時間：8/9 11:04 15:04 19:04
+5. 問題描述：[FAILURE]-[20250809]-[ACO-BCH-CONTACTLIST 接觸名單收檔暨下檔處理]-[處理失敗:[job_result:failure] IMPORT CM_CHANNEL_LIST_MA 失敗]
+6. 根因：bu給的檔案ODS_RECEIVEERROR_20250809_CHANNEL_OUTPUT_MA20250809.txt 13 column(RANK VALUE) DB長度為10，但名單檔長度為12造成insert TMP table失敗
+7. 建議：請bu重新提供正確的名單檔，並重新執行批次。
+-------------------------------
     """,
     tools=[],
     generate_content_config=types.GenerateContentConfig(
